@@ -47,4 +47,11 @@ public abstract class EntityType<T extends EntityType<T, E>, E extends Entity<E,
         clone.setCustomFields(customFields.stream().map(Field::clone).collect(Collectors.toList()));
         return clone;
     }
+
+    @JsonIgnore
+    public List<Field> getAllFields() {
+        List<Field> all = new ArrayList<>(fixedFields);
+        all.addAll(customFields);
+        return all;
+    }
 }

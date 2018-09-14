@@ -37,7 +37,6 @@ public abstract class AbstractEntityTypeService<T extends EntityType<T, E>, E ex
 
     @Override
     public T update(T type) {
-        // check if such type exists
         findById(type.getId());
         type.setLastModifiedDate(LocalDateTime.now());
         return entityTypeDao.save(type);

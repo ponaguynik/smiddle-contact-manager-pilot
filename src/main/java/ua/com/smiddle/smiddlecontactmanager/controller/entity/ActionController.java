@@ -4,27 +4,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ua.com.smiddle.smiddlecontactmanager.model.entity.Action;
 import ua.com.smiddle.smiddlecontactmanager.service.entity.ActionService;
+import ua.com.smiddle.smiddlecontactmanager.validator.ActionValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/actions")
 public class ActionController {
     private final ActionService actionService;
+    private final ActionValidator actionValidator;
 
     @Autowired
-    public ActionController(ActionService actionService) {
+    public ActionController(ActionService actionService, ActionValidator actionValidator) {
         this.actionService = actionService;
+        this.actionValidator = actionValidator;
     }
 
-    @RequestMapping(method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<Action> create(@RequestBody Action action) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(actionService.create(action));
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.addValidators(actionValidator);
     }
 
     @RequestMapping(path = "/{actionId}", method = RequestMethod.GET,
@@ -51,9 +54,16 @@ public class ActionController {
         return actionService.findAllByAppealId(appealId);
     }
 
+    @RequestMapping(method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Action> create(@Valid @RequestBody Action action) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(actionService.create(action));
+    }
+
     @RequestMapping(path = "/{actionId}", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public Action update(@PathVariable String actionId, @RequestBody Action action) {
+    public Action update(@PathVariable String actionId, @Valid @RequestBody Action action) {
         action.setId(actionId);
         return actionService.update(action);
     }

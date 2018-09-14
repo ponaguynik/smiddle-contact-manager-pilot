@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import ua.com.smiddle.smiddlecontactmanager.model.type.AppealType;
 
 @CompoundIndexes({
+        @CompoundIndex(name = "appeal_to_type", def = "{'type.id' : 1}"),
         @CompoundIndex(name = "appeal_to_client", def = "{'client.id' : 1}")
 })
 @Data

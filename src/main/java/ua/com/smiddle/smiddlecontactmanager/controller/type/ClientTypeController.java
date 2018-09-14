@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ua.com.smiddle.smiddlecontactmanager.model.type.ClientType;
 import ua.com.smiddle.smiddlecontactmanager.service.type.ClientTypeService;
 import ua.com.smiddle.smiddlecontactmanager.template.EntityTypeTemplate;
-import ua.com.smiddle.smiddlecontactmanager.validator.ClientTypeValidator;
+import ua.com.smiddle.smiddlecontactmanager.validator.EntityTypeValidator;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,14 +19,14 @@ import java.util.List;
 public class ClientTypeController {
     private final ClientTypeService clientTypeService;
 
-    @InitBinder
-    public void initBinder(WebDataBinder binder) {
-        binder.addValidators(new ClientTypeValidator());
-    }
-
     @Autowired
     public ClientTypeController(ClientTypeService clientTypeService) {
         this.clientTypeService = clientTypeService;
+    }
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.addValidators(new EntityTypeValidator());
     }
 
     @RequestMapping(method = RequestMethod.GET,
@@ -43,14 +43,14 @@ public class ClientTypeController {
 
     @RequestMapping(method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<ClientType> create(@RequestBody @Validated ClientType clientType) {
+    public ResponseEntity<ClientType> create(@Valid @RequestBody ClientType clientType) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(clientTypeService.create(clientType));
     }
 
     @RequestMapping(path = "/{typeId}", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ClientType update(@PathVariable String typeId, @RequestBody ClientType clientType) {
+    public ClientType update(@PathVariable String typeId, @Valid @RequestBody ClientType clientType) {
         clientType.setId(typeId);
         return clientTypeService.update(clientType);
     }

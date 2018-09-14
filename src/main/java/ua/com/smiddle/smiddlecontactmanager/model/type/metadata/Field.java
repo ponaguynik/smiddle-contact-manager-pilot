@@ -16,7 +16,7 @@ public class Field implements Cloneable {
     private int length;
     private DataType dataType;
     private InputType inputType;
-    // TODO: 05-Sep-18 Dictionary as separate entity
+    // TODO: 05-Sep-18 Dictionary as a separate entity
     private String dictionary;
 
     // TODO: 13-Sep-18 Manually clone dictionary
